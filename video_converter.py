@@ -1,14 +1,18 @@
 import sys
+from io import StringIO
+
 from moviepy.editor import VideoFileClip
 from PySide6.QtWidgets import (
     QApplication,
     QFileDialog,
+    QLabel,
     QMainWindow,
+    QPlainTextEdit,
     QPushButton,
     QVBoxLayout,
     QWidget,
-    QLabel,
 )
+
 
 class WebMToMP4Converter:
     def __init__(self):
@@ -35,6 +39,10 @@ class WebMToMP4Converter:
         self.convert_button = QPushButton("Converter para MP4")
         self.convert_button.clicked.connect(self.convert_webm_to_mp4)
         self.layout.addWidget(self.convert_button)
+
+        self.text_output = QPlainTextEdit()
+        self.text_output.setReadOnly(True)
+        self.layout.addWidget(self.text_output)
 
         self.central_widget.setLayout(self.layout)
         self.window.setCentralWidget(self.central_widget)
@@ -68,10 +76,15 @@ class WebMToMP4Converter:
     def convert_webm_to_mp4(self):
         try:
             video_clip = VideoFileClip(self.input_file)
-            video_clip.write_videofile(self.output_file, codec='libx264')
-            self.label_output.setText(f'Conversão concluída: {self.output_file}')
+            video_clip.write_videofile(self.output_file, codec="libx264")
+            sys.stdout = StringIO()  # Redireciona a saída padrão para um buffer
+            self.label_output.setText(f"Conversão concluída: {self.output_file}")
+            self.text_output.setPlainText(sys.stdout.getvalue())
+            sys.stdout = sys.__stdout__  # Restaura a saída padrão
+            self.label_output.setText(f"Conversão concluída: {self.output_file}")
         except Exception as e:
             self.label_output.setText(f"Ocorreu um erro durante a conversão: {str(e)}")
+
 
 if __name__ == "__main__":
     converter = WebMToMP4Converter()
