@@ -1,4 +1,5 @@
 import sys
+import subprocess
 from io import StringIO
 
 from moviepy.editor import VideoFileClip
@@ -75,12 +76,18 @@ class WebMToMP4Converter:
 
     def convert_webm_to_mp4(self):
         try:
+            sys.stdout = StringIO()  # Redireciona a saída padrão para um buffer
             video_clip = VideoFileClip(self.input_file)
             video_clip.write_videofile(self.output_file, codec="libx264")
-            sys.stdout = StringIO()  # Redireciona a saída padrão para um buffer
-            self.label_output.setText(f"Conversão concluída: {self.output_file}")
-            self.text_output.setPlainText(sys.stdout.getvalue())
             sys.stdout = sys.__stdout__  # Restaura a saída padrão
+            command = ["ffmpeg", "-i", self.input_file, self.output_file]
+            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+
+            for line in process.stdout:
+                self.text_output.append(line)
+            process.wait()
+            sys.stdout = sys.__stdout__  # Restaura a saída padrão
+
             self.label_output.setText(f"Conversão concluída: {self.output_file}")
         except Exception as e:
             self.label_output.setText(f"Ocorreu um erro durante a conversão: {str(e)}")
