@@ -17,9 +17,32 @@ if TYPE_CHECKING:
 
 class Converter:
     def __init__(self, window: "MainWindow"):
+        """
+        Initializes the class instance.
+
+        :param window: An instance of the MainWindow class.
+        :type window: MainWindow
+        """
         self.window = window
 
     def start_conversion(self, selected_format, input_path, output_path):
+        """
+        Convert a video file to the specified format and save it to the output path.
+
+        This function takes an input video file, converts it to the specified video format
+        using the chosen codec, and saves the converted video to the output path.
+
+        Args:
+            input_path (str): The path to the input video file.
+            output_path (str): The path where the converted video will be saved.
+            selected_format (str): The desired format for the converted video.
+
+        Raises:
+            Exception: If any error occurs during the conversion process.
+
+        Returns:
+            None
+        """
         msg = MsgBox(self.window)
         print(input_path)
         if not input_path:

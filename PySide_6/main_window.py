@@ -35,13 +35,19 @@ class MainWindow(QMainWindow):
 
 
     def adjust_fixed_size(self) -> None:
+        """
+        Adjusts the fixed size of the window to fit its content.
+
+        This function attempts to resize the window to fit its content. It calls the `adjustSize()` method to perform the resizing.
+
+        Parameters:
+            self: The current instance of the class.
+
+        Returns:
+            None
+        """
         # Tenta ajustar o tamanho da janela ao conteúdo
-
         self.adjustSize()
-
-        # Tirando o redimensionamento da janela
-
-        # self.setFixedSize(self.size())
 
     def addwidget_to_vlayout(self, widget: QWidget) -> None:
         """
@@ -64,6 +70,15 @@ class MainWindow(QMainWindow):
         return QMessageBox(self)
 
     def make_menu_items(self, menu_item: list | str | tuple):
+        """
+        Creates menu items for the menu bar.
+
+        Parameters:
+            menu_item (list | str | tuple): The menu item(s) to be added to the menu bar.
+
+        Returns:
+            None
+        """
         menu = self.menuBar()
         if isinstance(menu_item, (list, tuple)):
             for item in menu_item:

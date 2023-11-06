@@ -3,3 +3,6 @@ env
 */.mpy_cache
 
 /.tests
+/build
+/dist
+*.spec

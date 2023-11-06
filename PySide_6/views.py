@@ -24,6 +24,20 @@ if TYPE_CHECKING:
 
 
 def _setup_theme():
+    """
+    Sets up the theme for the application.
+
+    This function configures the theme for the application using the qdarktheme library.
+    It sets the theme to "dark", with rounded corners, and customizes the primary color based on 
+    the `PRIMARY_COLOR` variable. The `additional_qss` parameter is used to apply additional custom
+    styles to the application.
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
     qdarktheme.setup_theme(
         theme="dark",
         corner_shape="rounded",
@@ -41,10 +55,32 @@ def _setup_theme():
 
 class Button(QPushButton):
     def __init__(self, text: str, parent: "MainWindow", *args, **kwargs):
+        """
+        Initializes the object with the given text, parent, and any additional arguments and keyword 
+        arguments.
+
+        :param text: A string representing the text to be displayed.
+        :type text: str
+        :param parent: The parent object of the current object.
+        :type parent: MainWindow
+        :param args: Additional positional arguments.
+        :param kwargs: Additional keyword arguments.
+        """
         super().__init__(text, parent, *args, **kwargs)
         self.config_style()
 
     def config_style(self):
+        """
+        Configures the style of the object.
+
+        This function sets the font size of the object to a small value.
+
+        Parameters:
+            self (object): The object itself.
+
+        Returns:
+            None
+        """
         font = self.font()
         font.setPixelSize(SMALL_FONT_SIZE)
         self.setFont(font)
@@ -52,10 +88,24 @@ class Button(QPushButton):
 
 class InfoStatusBar:
     def __init__(self, parent: "MainWindow"):
+        """
+        Initializes the class instance.
+
+        :param parent: The parent MainWindow instance.
+        """
         self.window = parent
         self.config_style()
 
     def config_style(self):
+        """
+        Sets the font size of the status bar to 10 pixels.
+
+        Parameters:
+            self (object): The current instance of the class.
+
+        Returns:
+            None
+        """
         font = self.window.status_bar.font()
         font.setPixelSize(10)
         self.window.status_bar.setFont(font)
@@ -132,10 +182,31 @@ class ButtonLayout(QVBoxLayout):
         self.addWidget(self.button)
 
     def _connect_button_clicked(self, button: Button, slot):
+        """
+        Connects a button click event to a given slot.
+
+        Args:
+            button (Button): The button to connect.
+            slot (callable): The slot to connect to.
+
+        Returns:
+            None
+        """
         button.clicked.connect(slot)
 
     @Slot()
     def _make_slot(self, func, *args, **kwargs):
+        """
+        Creates a slot function that wraps the provided function.
+
+        Parameters:
+            func (function): The function to be wrapped.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            function: The wrapped function.
+        """
         @Slot(bool)
         def real_slot(_):
             func(*args, **kwargs)
@@ -144,6 +215,28 @@ class ButtonLayout(QVBoxLayout):
 
     @Slot()
     def _start_convert(self):
+        """
+        Starts the conversion process.
+
+        This function is triggered when the user clicks on the start button. It retrieves the input
+        path and output path from the respective input fields. If either of the paths is empty, the
+        function returns without performing any further actions.
+
+        The function then checks if a conversion thread is already running. If it is, an error
+        message is displayed and the function returns. Otherwise, a new conversion thread is 
+        created with the selected format, input path, and output path. The finished signal of the
+        conversion thread is connected to the handle_conversion_finished slot, and the error signal
+        is connected to the handle_conversion_error slot. The conversion thread is then started.
+
+        Finally, a status message is displayed on the status bar indicating that the conversion is
+        in progress.
+
+        Parameters:
+        - None
+
+        Return:
+        - None
+        """
         input_path = self.input_file_field.text()
         output_path = self.output_file_field.text()
         if not input_path:
@@ -151,7 +244,6 @@ class ButtonLayout(QVBoxLayout):
         if not output_path:
             return
 
-        # self.convert.start_conversion(self.selected_format, input_path, output_path)
         if self.convert_thread is not None and self.convert_thread.isRunning():
             self.msg.show_error("Conversão em andamento")
             return
@@ -165,6 +257,19 @@ class ButtonLayout(QVBoxLayout):
 
     @Slot()
     def _select_input_folder(self):
+        """
+        Slot function to select an input folder.
+
+        This function opens a file dialog to allow the user to select a video file for conversion.
+        The dialog options are set to read-only and the file filters are set to include various video formats.
+        The selected folder path is then set as the text of the input file field.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
         filters = "Vídeos (*.webm *.mp4 *.avi *.mkv *.mov *.mpeg1 *.mpeg2 *.mpeg4\
@@ -184,6 +289,11 @@ class ButtonLayout(QVBoxLayout):
 
     @Slot()
     def _select_output_folder(self):
+        """
+        Slot function that selects an output folder for the user to choose from.
+        This function takes no parameters.
+        Returns nothing.
+        """
         output_extension = self.combo.currentText()
         filters = f"*.{output_extension.lower()}"
         selected_folder, _ = QFileDialog.getSaveFileName(
@@ -196,63 +306,25 @@ class ButtonLayout(QVBoxLayout):
         self.output_file_field.setText(selected_folder)
 
     def handle_conversion_finished(self, output_path):
+        """
+        Handles the event when a conversion finishes.
+
+        Parameters:
+            output_path (str): The path where the conversion output is saved.
+
+        Returns:
+            None
+        """
         self.window.status_bar.showMessage("Conversão concluída")
         self.msg.show_info(f"Conversão concluída.\nSalvo em: {output_path}")
 
     def handle_conversion_error(self, error_message):
+        """
+        Handles a conversion error by displaying an error message in the status bar and showing
+        a message box with the error details.
+
+        :param error_message: The error message to display.
+        :type error_message: str
+        """
         self.window.status_bar.showMessage("Conversão cancelada")
         self.msg.show_error(f"Conversão cancelada: {error_message}")
-
-
-# class Converter:
-#     def __init__(self, window: "MainWindow"):
-#         self.window = window
-
-#     def start_conversion(self, selected_format, input_path, output_path):
-#         msg = MsgBox(self.window)
-#         print(input_path)
-#         if not input_path:
-#             return
-#         try:
-#             temp_output = tempfile.NamedTemporaryFile(
-#                 suffix=f".{selected_format.lower()}", delete=False
-#             )
-
-#             codec = self.convert(selected_format)
-#             video_clip = VideoFileClip(input_path)
-#             video_clip.write_videofile(temp_output.name, codec=codec)
-
-#             if not output_path:
-#                 msg.show_error("Conversão cancelada")
-#                 return
-#             shutil.copy(temp_output.name, output_path)
-
-#             msg.show_success(f"Conversão concluída.\nSalvo em: {output_path}")
-
-#         except Exception as e:
-#             msg.show_error(f"Ocorreu um erro durante a conversão: {str(e)}")
-
-#     def convert(self, selected_format):
-#         for extension in CODECS:
-#             if selected_format == extension[0]:
-#                 return extension[1]
-
-
-# class MsgBox:
-#     def __init__(self, window: "MainWindow") -> None:
-#         self.window = window
-
-#     def make_dialog(self, text):
-#         msg_box = self.window.make_msg_box()
-#         msg_box.setText(text)
-#         return msg_box
-
-# def show_error(self, text):
-#     msg_box = self.make_dialog(text)
-#     msg_box.setIcon(msg_box.Icon.Critical)
-#     msg_box.exec()
-
-# def show_success(self, text):
-#     msg_box = self.make_dialog(text)
-#     msg_box.setIcon(msg_box.Icon.Information)
-#     msg_box.exec()
