@@ -32,10 +32,7 @@ class MainWindow(QMainWindow):
 
         # Adicionando status bar
         self.status_bar = self.statusBar()
-        current_font = self.statusBar().font()
-        new_font = QFont(current_font)
-        new_font.setPointSize(10)
-        self.status_bar.setFont(new_font)
+
 
     def adjust_fixed_size(self) -> None:
         # Tenta ajustar o tamanho da janela ao conteúdo

@@ -5,9 +5,10 @@
 from typing import TYPE_CHECKING
 
 import qdarktheme
-from conveter import Converter, ConverterThread
+from conveter import ConverterThread
 from messages import MsgBox
 from PySide6.QtCore import Slot
+from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (
     QComboBox,
     QFileDialog,
@@ -50,6 +51,17 @@ class Button(QPushButton):
         self.setFont(font)
 
 
+class InfoStatusBar:
+    def __init__(self, parent: "MainWindow"):
+        self.window = parent
+        self.config_style()
+
+    def config_style(self):
+        font = self.window.status_bar.font()
+        font.setPixelSize(10)
+        self.window.status_bar.setFont(font)
+
+
 class ButtonLayout(QVBoxLayout):
     def __init__(self, window: "MainWindow", *args, **kwargs):
         """
@@ -62,6 +74,7 @@ class ButtonLayout(QVBoxLayout):
         # self.convert = Converter(window)
         self.msg = MsgBox(window)
         self.convert_thread: ConverterThread | None = None
+        self.status_bar = InfoStatusBar(window)
 
         self._make_layout()
         self.selected_format = self.combo.currentText()
