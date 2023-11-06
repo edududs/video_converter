@@ -116,11 +116,13 @@ class ConverterThread(QThread):
         2. Retrieves the codec for the selected format.
         3. Loads the video clip from the input path.
         4. Writes the video clip to the temporary output file using the specified codec.
-        5. If an output path is not provided, displays an error message and emits a signal indicating the conversion cancellation.
+        5. If an output path is not provided, displays an error message and emits a signal
+        indicating the conversion cancellation.
         6. Copies the temporary output file to the specified output path.
         7. Displays a success message indicating the conversion completion and the output path.
         8. Emits a signal indicating the completion of the conversion process.
-        9. If an exception occurs during the conversion process, displays an error message with the exception details and emits a signal indicating the error.
+        9. If an exception occurs during the conversion process, displays an error message with the
+        exception details and emits a signal indicating the error.
 
         Parameters:
             None
@@ -133,30 +135,30 @@ class ConverterThread(QThread):
                 suffix=f".{self.selected_format.lower()}", delete=False
             )
 
-            codec = self.convert(self.selected_format)
+            codec = self.convert_format(self.selected_format)
             video_clip = VideoFileClip(self.input_path)
             video_clip.write_videofile(temp_output.name, codec=codec)
+
             if not self.output_path:
                 self.msg.show_error("Conversão cancelada")
                 self.error.emit("Conversão cancelada")
                 return
+
             shutil.copy(temp_output.name, self.output_path)
-            # self.msg.show_success(f"Conversão concluída.\nSalvo em: {self.output_path}")
             self.finished.emit(self.output_path)
         except Exception as e:
-            # self.msg.show_error(f"Ocorreu um erro durante a conversão: {str(e)}")
             self.error.emit(str(e))
 
-    def convert(self, selected_format: str):
+    def convert_format(self, format: str):
         """
-        Converts the selected format to its corresponding codec.
+        Returns the codec for a given format.
 
         Parameters:
-            selected_format (str): The format to be converted.
+            format (str): Format to be converted.
 
         Returns:
-            str: The corresponding codec for the selected format.
+            str: The corresponding codec.
         """
-        for extension in CODECS:
-            if selected_format == extension[0]:
-                return extension[1]
+        for codec in CODECS:
+            if format == codec[0]:
+                return codec[1]
