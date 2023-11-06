@@ -4,11 +4,11 @@
 # pylint: disable=C0115
 import shutil
 import tempfile
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from messages import MsgBox
 from moviepy.editor import VideoFileClip
-from PySide6.QtCore import QObject, QThread, Signal
+from PySide6.QtCore import QThread, Signal
 from utils import CODECS
 
 if TYPE_CHECKING:

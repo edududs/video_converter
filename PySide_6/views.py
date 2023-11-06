@@ -8,7 +8,6 @@ import qdarktheme
 from conveter import ConverterThread
 from messages import MsgBox
 from PySide6.QtCore import Slot
-from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (
     QComboBox,
     QFileDialog,

@@ -1,4 +1,4 @@
-from PySide6.QtGui import QFont
+
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QVBoxLayout, QWidget
 
 
