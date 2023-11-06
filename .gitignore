@@ -1,3 +1,5 @@
 env
 */__pycache__/
 */.mpy_cache
+
+/.tests
