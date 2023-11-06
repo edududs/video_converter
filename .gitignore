@@ -1,2 +1,5 @@
 env
-teste_video_converter.py
+*/__pycache__/
+*/.mpy_cache
+
+/.tests
